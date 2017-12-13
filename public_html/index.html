@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>JS-client</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Articles</a>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+          </form>
+        </div>
+        <button type="button" onclick="createArticle();" class="btn btn-outline-secondary">Add new article</button>
+      </nav>
+        <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">TITLE</th>
+            <th scope="col">CONTENT</th>
+            <th scope="col">AUTHOR</th>
+            <th scope="col">CREATION DATE</th>
+            <th scope="col">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="articles">
+          <tr class="table-active">
+            <th scope="row">Active</th>
+            <td>Column content</td>
+            <td>Column content</td>
+            <td>Column content</td>
+            <td>Column content</td>
+            <td>
+                <a href="#"><i class="material-icons">edit</i></a>
+                <a href="#" class="col-lg-1"><i class="material-icons">delete</i></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+        <form id="addArticle"></form>
+        <script src="js/client.js"></script>
+    </body>
+</html>
