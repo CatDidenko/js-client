@@ -18,12 +18,30 @@ and open the template in the editor.
         <a class="navbar-brand" href="#">Articles</a>
         <div class="collapse navbar-collapse" id="navbarColor01">
           <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+              <input class="form-control mr-sm-2" type="text" placeholder="Search" id="search" onkeyup="articles.Search()">
           </form>
         </div>
-        <button type="button" onclick="createArticle();" class="btn btn-outline-secondary">Add new article</button>
+        <button type="button" id="addArticle" class="btn btn-outline-secondary" onclick="articles.addAction()">Add new article</button>
       </nav>
-        <table class="table table-hover">
+        <form id="addArcticle" class="col-lg-2">
+            <fieldset>
+            <legend>Add new article</legend>
+            <div class="form-group">
+              <label for="title">Title of article</label>
+              <input type="text" class="form-control" id="title">
+            </div>
+            <div class="form-group">
+             <label for="exampleTextarea">Content</label>
+                <textarea class="form-control" id="content" rows="3"></textarea>
+              </div>
+            <div class="form-group">
+              <label for="author">Author</label>
+              <input type="text" class="form-control" id="author">
+            </div>
+            <button type="submit" class="btn btn-primary" id="add">Add</button>
+            </fieldset>
+        </form>
+        <table class="table table-hover" id="articleTable">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -35,20 +53,9 @@ and open the template in the editor.
           </tr>
         </thead>
         <tbody id="articles">
-          <tr class="table-active">
-            <th scope="row">Active</th>
-            <td>Column content</td>
-            <td>Column content</td>
-            <td>Column content</td>
-            <td>Column content</td>
-            <td>
-                <a href="#"><i class="material-icons">edit</i></a>
-                <a href="#" class="col-lg-1"><i class="material-icons">delete</i></a>
-            </td>
-          </tr>
         </tbody>
       </table>
-        <form id="addArticle"></form>
+        <script src="js/jquery.js"></script>
         <script src="js/client.js"></script>
     </body>
 </html>
