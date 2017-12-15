@@ -12,12 +12,6 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-  table.hide {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0s, visibility 3s linear 3s;
-  }
-
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -131,6 +125,7 @@ html {
 article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block;
 }
+
 
 body {
   margin: 0;

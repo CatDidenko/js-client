@@ -12,6 +12,22 @@ and open the template in the editor.
         <link href="css/bootstrap.css" rel="stylesheet">
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+          <style>
+
+        .sortable.asc:after{
+            content:"\1F845";
+            display:inline-block;
+            padding:0 .5em;
+            color:black;
+        }
+        .sortable.desc:after{
+            content:"\1F847";
+            display:inline-block;
+            padding:0 .5em;
+            color:black;
+        }
+
+    </style>
     </head>
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -38,17 +54,17 @@ and open the template in the editor.
               <label for="author">Author</label>
               <input type="text" class="form-control" id="author">
             </div>
-            <button type="submit" class="btn btn-primary" id="add">Add</button>
+            <button type="button" class="btn btn-primary" id="add">Add</button>
             </fieldset>
         </form>
         <table class="table table-hover" id="articleTable">
         <thead>
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">TITLE</th>
+            <th scope="col" class="sortable asc">ID</th>
+            <th scope="col" class="sortable">TITLE</th>
             <th scope="col">CONTENT</th>
-            <th scope="col">AUTHOR</th>
-            <th scope="col">CREATION DATE</th>
+            <th scope="col" class="sortable">AUTHOR</th>
+            <th scope="col" class="sortable">CREATION DATE</th>
             <th scope="col">ACTIONS</th>
           </tr>
         </thead>
