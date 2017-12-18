@@ -1,10 +1,10 @@
-//var Article = function(title, content, author, created_date){
-//    this.title = title;
-//    this.content = content;
-//    this.author = author;
-//    this.created_date = created_date;
-//
-//}
+var Article = function(id = null, title = null, content = null, author = null, creating_date = null,){
+    this.id = id;
+    this.title = title;
+    this.content = content;
+    this.author = author;
+    this.creating_date = creating_date;
+}
 
 ArticleController.prototype.getAllArticles = function(){
     var url = 'http://dcodeit.net/didenko_ekaterina/api/posts';
@@ -14,8 +14,18 @@ ArticleController.prototype.getAllArticles = function(){
         dataType: 'json',
         username: 'admin',
         password: 'admin',
-        success: articles.viewTable
-    });
+        success: function (data){
+             for (var key in data){
+                var article = new Article();
+                article.id = data[key].id;
+                article.title = data[key].title;
+                article.content = data[key].content;
+                article.author = data[key].author;
+                article.creating_date = data[key].creation_date;
+                articles.posts.push(article);
+            }
+        }
+    }).done(this.viewTable);
 }
 
 ArticleController.prototype.addArticle = function(title, content, author){
@@ -25,12 +35,22 @@ ArticleController.prototype.addArticle = function(title, content, author){
         method : 'POST',
         username: 'admin',
         password: 'admin',
+        dataType: 'json',
         data: {
             title:title,
             content: content,
             author: author
+        },
+        success: function(data) {
+            var article = new Article();
+                article.id = data.id;
+                article.title = title;
+                article.content = content;
+                article.author = author;
+                article.creating_date = data.creation_date;
+                articles.posts.push(article);
         }
-    }).done(this.indexAction);
+    }).done(this.viewTable);
 }
 
 ArticleController.prototype.deleteArticle = function(id){
@@ -39,8 +59,15 @@ ArticleController.prototype.deleteArticle = function(id){
         url : url,
         method : 'DELETE',
         username: 'admin',
-        password: 'admin'
-        }).done(this.getAllArticles);
+        password: 'admin',
+          success: function() {
+            for (var key in articles.posts){
+                if(articles.posts[key].id == id){
+                    delete articles.posts[key];
+                }
+            }
+        }
+        }).done(this.viewTable);
 }
 
 ArticleController.prototype.editArticle = function(id,title, content, author){
@@ -54,11 +81,23 @@ ArticleController.prototype.editArticle = function(id,title, content, author){
             title:title,
             content: content,
             author: author,
-        }
-        }).done(this.indexAction);
+        },
+        success: function() {
+                    for (var key in articles.posts){
+                        if(articles.posts[key].id == id){
+                            articles.posts[key].title = title;
+                            articles.posts[key].content = content;
+                            articles.posts[key].author = author;
+                        }
+                    }
+                }
+        }).done(articles.viewTable);
 }
 
-ArticleController.prototype.viewTable = function(data){
+ArticleController.prototype.viewTable = function(){
+    $('#addArcticle').hide();
+    $('#articleTable').show();
+    var data = articles.posts;
     var output = '';
     for (var key in data){
         output += '<tr id="'+ data[key].id +'">';
@@ -66,36 +105,13 @@ ArticleController.prototype.viewTable = function(data){
         output += '<td>' + data[key].title + '</td>';
         output += '<td>' + data[key].content + '</td>';
         output += '<td>' + data[key].author + '</td>';
-        output += '<td>' + articles.UpdateTime(data[key].creation_date) + '</td>';
+        output += '<td>' + articles.UpdateTime(data[key].creating_date) + '</td>';
         output += '<td>'+
                   '<button type="button" class="material-icons" onclick="articles.editAction('+data[key].id+')">edit</button>' +
                   '<button type="button" class="material-icons" onclick="articles.deleteAction('+data[key].id+')">delete</button>' +
                   '</td>';
         output += '</tr>';
     }
-    $('#articles').html(output);
-    articles.posts = data;
-}
-
-ArticleController.prototype.Search = function(){
-    var searchField = $('#search').val();
-    var myExp = new RegExp(searchField, 'i');
-    var output = '';
-    $.each(articles.posts, function(key, value){
-        if((value.title.search(myExp)!=-1)||(value.content.search(myExp)!=-1)||value.author.search(myExp)!=-1){
-              output += '<tr id="'+ value.id +'">';
-                output += '<td>' + value.id + '</td>';
-                output += '<td>' + value.title + '</td>';
-                output += '<td>' + value.content + '</td>';
-                output += '<td>' + value.author + '</td>';
-                output += '<td>' + articles.UpdateTime(value.creation_date) + '</td>';
-                output += '<td>'+
-                  '<button type="button" class="material-icons" onclick="articles.editAction('+value.id+')">edit</button>' +
-                  '<button type="button" class="material-icons" onclick="articles.deleteAction('+value.id+')">delete</button>' +
-                  '</td>';
-        output += '</tr>';
-        }
-    });
     $('#articles').html(output);
 }
 
@@ -123,71 +139,64 @@ ArticleController.prototype.UpdateTime = function(creation_date){
 
 
 function ArticleController() {
-    this.posts;
+    this.posts = [];
+    this.post_id;
+    
     this.indexAction = function() {
-        $('#addArcticle').hide();
-        $('#articleTable').show();
         articles.getAllArticles();
     };
 
     this.addAction = function() {
         $('#articleTable').hide();
+        $('#edit').hide();
+        $('#add').show();
         $('#addArcticle').show();
-        $('#add').click(function(){
-            title = $('#title').val();
-            content = $('#content').val();
-            author = $('#author').val();
-            articles.addArticle(title, content, author);
-        });
+        document.getElementById("addArcticle").reset();
+    };
+
+    this.editAction = function(id) {
+        this.post_id = id;
+        $('#articleTable').hide();
+        $('#add').hide();
+        $('#edit').show();
+        $('#addArcticle').show();
+        var article = document.getElementById(''+id);
+
+        $('#title').val("" + article.cells[1].innerHTML);
+        $('#content').val("" + article.cells[2].innerHTML);
+        $('#author').val("" + article.cells[3].innerHTML);
     };
 
     this.deleteAction = function(id) {
         this.deleteArticle(id);
     };
 
-    this.editAction = function(id) {
-        $('#articleTable').hide();
-        $('#addArcticle').show();
+    $('#add').click(function(){
+        title = $('#title').val();
+        content = $('#content').val();
+        author = $('#author').val();
+        articles.addArticle(title, content, author);
+    });
 
-        var article = document.getElementById(''+id);
-        $('#title').val("" + article.cells[1].innerHTML);
-        $('#content').val("" + article.cells[2].innerHTML);
-        $('#author').val("" + article.cells[3].innerHTML);
-        id = article.cells[0].innerHTML;
-        $('#add').click(function(){
-            title = $('#title').val();
-            content = $('#content').val();
-            author = $('#author').val();
-            articles.editArticle(id, title, content, author);
-        });
-    };
+    $('#edit').click(function(){
+        title = $('#title').val();
+        content = $('#content').val();
+        author = $('#author').val();
+        articles.editArticle(articles.post_id, title, content, author);
+    });
 }
 
 var articles = new ArticleController();
 articles.indexAction();
 
-$(".sortable").click(function(){
-    var o = $(this).hasClass('asc') ? 'desc' : 'asc';
-    $('.sortable').removeClass('asc').removeClass('desc');
-    $(this).addClass(o);
+$(document).ready(function() {
 
-    var colIndex = $(this).prevAll().length;
-    var tbod = $(this).closest("table").find("tbody");
-    var rows = tbod.find("tr");
-
-    rows.sort(function(a,b){
-        var A = $(a).find("td").eq(colIndex).text();
-        var B = $(b).find("td").eq(colIndex).text();
-
-        if (!isNaN(A)) A = Number(A);
-        if (!isNaN(B)) B = Number(B);
-
-        return o == 'asc' ? A > B : B > A;
-    });
-
-    $.each(rows, function(index, ele){
-        tbod.append(ele);
-    });
+$(window).scroll(function() {
+    if ($(window).scrollTop() + $(window).height() > $("#articles").height() && !busy) {
+    busy = true;
+    articles.indexAction(offset);
+    }
+});
 });
 
 
