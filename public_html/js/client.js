@@ -1,13 +1,17 @@
-var Article = function(id = null, title = null, content = null, author = null, creating_date = null,){
-    this.id = id;
-    this.title = title;
-    this.content = content;
-    this.author = author;
-    this.creating_date = creating_date;
+var Article = function(){
+    this.id;
+    this.title;
+    this.content;
+    this.author;
+    this.creation_date;
 }
 
-ArticleController.prototype.getAllArticles = function(){
-    var url = 'http://dcodeit.net/didenko_ekaterina/api/posts';
+var ArticlesList = function(){
+    this.posts = [];
+}
+
+ArticleController.prototype.getAllArticles = function(offset, callback){
+    var url = 'http://dcodeit.net/didenko_ekaterina/api/posts/'+ offset;
     $.ajax({
         url : url,
         method : 'GET',
@@ -21,11 +25,11 @@ ArticleController.prototype.getAllArticles = function(){
                 article.title = data[key].title;
                 article.content = data[key].content;
                 article.author = data[key].author;
-                article.creating_date = data[key].creation_date;
+                article.creation_date = data[key].creation_date;
                 articles.posts.push(article);
             }
         }
-    }).done(this.viewTable);
+    }).done(callback);
 }
 
 ArticleController.prototype.addArticle = function(title, content, author){
@@ -47,7 +51,7 @@ ArticleController.prototype.addArticle = function(title, content, author){
                 article.title = title;
                 article.content = content;
                 article.author = author;
-                article.creating_date = data.creation_date;
+                article.creation_date = data.creation_date;
                 articles.posts.push(article);
         }
     }).done(this.viewTable);
@@ -105,7 +109,7 @@ ArticleController.prototype.viewTable = function(){
         output += '<td>' + data[key].title + '</td>';
         output += '<td>' + data[key].content + '</td>';
         output += '<td>' + data[key].author + '</td>';
-        output += '<td>' + articles.UpdateTime(data[key].creating_date) + '</td>';
+        output += '<td class="date">' + articles.GetTime(data[key].creation_date) + '</td>';
         output += '<td>'+
                   '<button type="button" class="material-icons" onclick="articles.editAction('+data[key].id+')">edit</button>' +
                   '<button type="button" class="material-icons" onclick="articles.deleteAction('+data[key].id+')">delete</button>' +
@@ -115,7 +119,7 @@ ArticleController.prototype.viewTable = function(){
     $('#articles').html(output);
 }
 
-ArticleController.prototype.UpdateTime = function(creation_date){
+ArticleController.prototype.GetTime = function(creation_date){
 
     var seconds = Math.floor(((new Date().getTime()/1000) - creation_date)),
     interval = Math.floor(seconds / 31536000);
@@ -141,9 +145,16 @@ ArticleController.prototype.UpdateTime = function(creation_date){
 function ArticleController() {
     this.posts = [];
     this.post_id;
+    this.busy = false;
+    this.offset = 0;
+    this.columnForSorting = 'id';
+    this.typeOfSorting = 'asc';
     
     this.indexAction = function() {
-        articles.getAllArticles();
+        articles.getAllArticles(articles.offset, function(){
+            articles.posts.sort(articles.Sorting(articles.columnForSorting, articles.typeOfSorting));
+            articles.viewTable();
+        });
     };
 
     this.addAction = function() {
@@ -189,15 +200,16 @@ function ArticleController() {
 var articles = new ArticleController();
 articles.indexAction();
 
-$(document).ready(function() {
-
-$(window).scroll(function() {
-    if ($(window).scrollTop() + $(window).height() > $("#articles").height() && !busy) {
-    busy = true;
-    articles.indexAction(offset);
+ArticleController.prototype.UpdateTime = function(){
+        var data = articles.posts;
+        for (var key in data){
+            var time = articles.GetTime(data[key].creation_date);
+             $('td', $('#'+data[key].id)).eq(4).html(time);
     }
-});
-});
+}
+
+setInterval('articles.UpdateTime()', 7000);
+
 
 
 
