@@ -31,13 +31,13 @@ and open the template in the editor.
     </head>
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="#">Articles</a>
+        <span class="navbar-brand">Articles</span>
         <div class="collapse navbar-collapse" id="navbarColor01">
           <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" id="search" onkeyup="articles.Search()">
+              <input class="form-control mr-sm-2" type="text" placeholder="Search" id="search" onkeyup="controller.Search()">
           </form>
         </div>
-        <button type="button" id="newArticle" class="btn btn-outline-secondary" onclick="articles.addAction()">Add new article</button>
+        <button type="button" id="newArticle" class="btn btn-outline-secondary" onclick="controller.showAdd()">Add new article</button>
       </nav>
         <form id="addArcticle" class="col-lg-2">
             <fieldset>
@@ -54,8 +54,8 @@ and open the template in the editor.
               <label for="author">Author</label>
               <input type="text" class="form-control" id="author">
             </div>
-            <button type="button" class="btn btn-primary" id="add">Add</button>
-            <button type="button" class="btn btn-primary" id="edit">Edit</button>
+            <button type="button" class="btn btn-primary" id="add" onclick="controller.addAction()">Add</button>
+            <button type="button" class="btn btn-primary" id="edit" onclick="controller.editAction()">Edit</button>
             </fieldset>
         </form>
         <table class="table table-hover" id="articleTable">
